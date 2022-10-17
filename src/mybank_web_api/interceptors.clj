@@ -47,6 +47,7 @@
   "Função de roteamento que carrega as contas ao contexto."
   [context]
   (println "Carregando contas ao contexto!!")
+  (println (:request context))
   (assoc context :contas db/contas-))
 
 (def carrega-contas-interceptor

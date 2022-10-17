@@ -5,6 +5,7 @@
             [io.pedestal.http :as http]
             [io.pedestal.http.body-params :as body-params]
             [io.pedestal.http.route :as route]
+            [io.pedestal.log :as log]
             [io.pedestal.test :as test-http]
             [io.pedestal.interceptor :as i]
 
@@ -52,8 +53,11 @@
                       ;; 3. add interceptador p/ alterar reposta final
                       app-interceptors/coerce-body
                       app-interceptors/lista-contas-interceptor] :route-name :contas]
-     ["/saldo/:id" :get [app-interceptors/get-saldo-interceptor] :route-name :saldo]
-     ["/deposito/:id" :post app-interceptors/make-deposit-interceptor :route-name :deposito]}))
+     ["/saldo/:id" :get [
+                         app-interceptors/get-saldo-interceptor] :route-name :saldo]
+     ["/deposito/:id" :post app-interceptors/make-deposit-interceptor :route-name :deposito]
+
+     }))
 
 (defonce server (atom nil))
 
@@ -70,7 +74,7 @@
                              ;; 2. carrega contas ao contexto
                              app-interceptors/carrega-contas-interceptor)))
 
-(http/log-request)
+;;(http/log-request)
 
 (defn create-server
   "Creates a HTTP Server using `service-map` definitions."
@@ -81,7 +85,9 @@
 (defn start
   "Starts the HTTP Server using `create-server` and holds its reference on `server` atom."
   []
-  (reset! server (http/start (create-server))))
+  (reset! server (http/start (create-server)))
+ (log/info :msg "servidor iniciado")
+  )
 
 (defn reset-server!
   "Restarts the HTTP server defined by `server`"
